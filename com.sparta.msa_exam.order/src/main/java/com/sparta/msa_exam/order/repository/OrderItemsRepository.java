@@ -1,0 +1,1 @@
+package com.sparta.msa_exam.order.repository;import com.sparta.msa_exam.order.core.domain.OrderItems;import org.springframework.data.jpa.repository.JpaRepository;public interface OrderItemsRepository extends JpaRepository<OrderItems, Integer> {}

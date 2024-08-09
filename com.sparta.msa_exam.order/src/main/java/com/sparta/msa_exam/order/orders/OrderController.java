@@ -1,12 +1,9 @@
 package com.sparta.msa_exam.order.orders;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
+import com.sparta.msa_exam.order.dto.OrderRequestDto;
+import com.sparta.msa_exam.order.dto.OrderResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/order")
@@ -20,35 +17,15 @@ public class OrderController {
      *
      * @param orderRequestDto
      * @param userId
-     * @param role
      * @return
      */
     @PostMapping
-    public OrderResponseDto createOrder(@RequestBody OrderRequestDto orderRequestDto,
-                                        @RequestHeader(value = "X-User-Id", required = true) String userId,
-                                        @RequestHeader(value = "X-Role", required = true) String role) {
+    public void createOrder(@RequestBody OrderRequestDto orderRequestDto,
+                                        @RequestHeader(value = "X-User-Id", required = true) String userId) {
 
-        return orderService.createOrder(orderRequestDto, userId);
+        orderService.createOrder(orderRequestDto, userId);
     }
 
-    /**
-     * 주문 전체 조회
-     * @param searchDto
-     * @param pageable
-     * @param userId
-     * @param role
-     * @return
-     */
-    @GetMapping
-    public Page<OrderResponseDto> getOrders(OrderSearchDto searchDto, Pageable pageable,
-                                            @RequestHeader(value = "X-User-Id", required = true) String userId,
-                                            @RequestHeader(value = "X-Role", required = true) String role) {
-        // 역할이 MANAGER인지 확인
-        if (!"MANAGER".equals(role)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied. User role is not MANAGER.");
-        }
-        return orderService.getOrders(searchDto, pageable,role, userId);
-    }
 
     /**
      * 주문 단건 조회

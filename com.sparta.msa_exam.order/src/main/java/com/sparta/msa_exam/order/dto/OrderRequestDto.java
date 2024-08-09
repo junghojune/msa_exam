@@ -1,4 +1,4 @@
-package com.sparta.msa_exam.order.orders;
+package com.sparta.msa_exam.order.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,5 +10,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderRequestDto {
-    private List<Long> orderItemIds;
+    private List<Long> orderItemsList;
 }

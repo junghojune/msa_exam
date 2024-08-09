@@ -1,11 +1,12 @@
 package com.sparta.msa_exam.order.core.domain;
 
 import com.sparta.msa_exam.order.core.enums.OrderStatus;
-import com.sparta.msa_exam.order.orders.OrderResponseDto;
+import com.sparta.msa_exam.order.dto.OrderResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -22,17 +23,13 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
-    @ElementCollection
-    @CollectionTable(name = "order_items", joinColumns = @JoinColumn(name = "order_id"))
-    @Column(name = "order_item_id")
-    private List<Long> orderItemIds;
-
     private LocalDateTime createdAt;
     private String createdBy;
     private LocalDateTime updatedAt;
     private String updatedBy;
-    private LocalDateTime deletedAt;
-    private String deletedBy;
+
+    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
+    List<OrderItems> orderItems = new ArrayList<>();
 
     @PrePersist
     protected void onCreate() {
@@ -53,25 +50,20 @@ public class Order {
     }
 
     // 팩토리 메서드
-    public static Order createOrder(List<Long> orderItemIds, String createdBy) {
+    public static Order createOrder(String createdBy) {
         return Order.builder()
-                .orderItemIds(orderItemIds)
                 .createdBy(createdBy)
                 .status(OrderStatus.CREATED)
                 .build();
     }
 
     // 업데이트 메서드
-    public void updateOrder(List<Long> orderItemIds, String updatedBy) {
-        this.orderItemIds = orderItemIds;
+    public void updateOrder(String updatedBy) {
         this.updatedBy = updatedBy;
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void deleteOrder(String deletedBy) {
-        this.deletedBy = deletedBy;
-        this.deletedAt = LocalDateTime.now();
-    }
+
 
     // DTO로 변환하는 메서드
     public OrderResponseDto toResponseDto() {
@@ -82,7 +74,7 @@ public class Order {
                 this.createdBy,
                 this.updatedAt,
                 this.updatedBy,
-                this.orderItemIds
+                OrderItems.toOrderItemResponseDto(this.orderItems)
         );
     }
 }
