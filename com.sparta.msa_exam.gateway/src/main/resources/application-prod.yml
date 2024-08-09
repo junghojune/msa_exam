@@ -1,0 +1,36 @@
+server:
+  port: ${gateway.server.port}
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: gateway-service
+  cloud:
+    gateway:
+      routes:
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/order/**
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/products/**
+        - id: auth-service
+          uri: lb://auth-service
+          predicates:
+            - Path=/auth/**
+      discovery:
+        locator:
+          enabled: true
+
+service:
+  jwt:
+    secret-key: ${security.jwt.key}
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${eureka.server.url}
