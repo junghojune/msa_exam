@@ -13,6 +13,12 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: ${product.db.username}
     password: ${product.db.password}
+  data:
+    redis:
+      host: ${order.redis.host}
+      port: ${order.redis.port}
+      username: ${order.redis.username}
+      password: ${order.redis.password}
 
 server:
   port: ${product.server.port}

@@ -1,12 +1,14 @@
-package com.sparta.msa_exam.order.orders;
+package com.sparta.msa_exam.order.service;
 
-import com.sparta.msa_exam.order.core.domain.Order;
-import com.sparta.msa_exam.order.core.domain.OrderItems;
+import com.sparta.msa_exam.order.domain.Order;
+import com.sparta.msa_exam.order.domain.OrderItems;
 import com.sparta.msa_exam.order.dto.OrderRequestDto;
 import com.sparta.msa_exam.order.dto.OrderResponseDto;
 import com.sparta.msa_exam.order.repository.OrderItemsRepository;
+import com.sparta.msa_exam.order.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -27,18 +29,19 @@ public class OrderService {
     @Transactional
     public OrderResponseDto createOrder(OrderRequestDto requestDto, String userId) {
         Order order = Order.createOrder(userId);
-        Order savedOrder = orderRepository.save(order);
 
         List<OrderItems> orderItems = new ArrayList<>();
         for(Long orderItem : requestDto.getOrderItemsList()){
-            orderItems.add(new OrderItems(savedOrder, orderItem));
+            OrderItems item = new OrderItems(order, orderItem);
+            order.addOrderItem(item);
+            orderItems.add(item);
         }
 
-        orderItemsRepository.saveAll(orderItems);
-        return toResponseDto(savedOrder);
+        orderRepository.save(order);
+
+        return order.toResponseDto();
     }
 
-    @Transactional
     @Cacheable(cacheNames = "orderCache", key = "args[0]")
     public OrderResponseDto getOrderById(Long orderId) {
         Order order = orderRepository.findById(orderId)
@@ -47,7 +50,7 @@ public class OrderService {
         return toResponseDto(order);
     }
 
-    @Transactional
+    @CachePut(cacheNames = "orderCache", key = "args[0]")
     public OrderResponseDto updateOrder(Long orderId, OrderRequestDto requestDto, String userId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Order not found"));
@@ -59,6 +62,7 @@ public class OrderService {
 
         order.updateOrder(userId);
         orderItemsRepository.saveAll(orderItems);
+
         Order updatedOrder = orderRepository.save(order);
 
         return toResponseDto(updatedOrder);

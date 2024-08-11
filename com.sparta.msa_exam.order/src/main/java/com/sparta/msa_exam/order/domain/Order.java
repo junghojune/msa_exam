@@ -1,6 +1,6 @@
-package com.sparta.msa_exam.order.core.domain;
+package com.sparta.msa_exam.order.domain;
 
-import com.sparta.msa_exam.order.core.enums.OrderStatus;
+import com.sparta.msa_exam.order.enums.OrderStatus;
 import com.sparta.msa_exam.order.dto.OrderResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,7 +28,7 @@ public class Order {
     private LocalDateTime updatedAt;
     private String updatedBy;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<OrderItems> orderItems = new ArrayList<>();
 
     @PrePersist
@@ -54,7 +54,13 @@ public class Order {
         return Order.builder()
                 .createdBy(createdBy)
                 .status(OrderStatus.CREATED)
+                .orderItems(new ArrayList<>())
                 .build();
+    }
+
+    public void addOrderItem(OrderItems orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
     }
 
     // 업데이트 메서드
