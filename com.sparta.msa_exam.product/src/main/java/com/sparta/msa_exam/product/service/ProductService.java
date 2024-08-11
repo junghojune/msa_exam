@@ -1,7 +1,10 @@
-package com.sparta.msa_exam.product.products;
+package com.sparta.msa_exam.product.service;
 
 
-import com.sparta.msa_exam.product.core.Product;
+import com.sparta.msa_exam.product.domain.Product;
+import com.sparta.msa_exam.product.dto.ProductRequestDto;
+import com.sparta.msa_exam.product.dto.ProductResponseDto;
+import com.sparta.msa_exam.product.products.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,8 +26,11 @@ public class ProductService {
         return ProductResponseDto.toResponseDto(savedProduct);
     }
 
-    public Page<ProductResponseDto> getProducts(ProductSearchDto searchDto, Pageable pageable) {
-        return productRepository.searchProducts(searchDto, pageable);
+    public Page<ProductResponseDto> getProducts(Pageable pageable) {
+
+        Page<Product> productList = productRepository.findAll(pageable);
+
+        return productList.map(ProductResponseDto::toResponseDto);
     }
 
     @Transactional(readOnly = true)

@@ -1,11 +1,13 @@
-package com.sparta.msa_exam.product.products;
+package com.sparta.msa_exam.product.controller;
 
+import com.sparta.msa_exam.product.dto.ProductRequestDto;
+import com.sparta.msa_exam.product.dto.ProductResponseDto;
+import com.sparta.msa_exam.product.service.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
@@ -37,13 +39,12 @@ public class ProductController {
     /**
      * 상품 조회 API
      *
-     * @param searchDto
      * @param pageable
      * @return Page<ProductResponseDto>
      */
     @GetMapping
-    public Page<ProductResponseDto> getProducts(ProductSearchDto searchDto, Pageable pageable) {
-        return productService.getProducts(searchDto, pageable);
+    public Page<ProductResponseDto> getProducts(Pageable pageable) {
+        return productService.getProducts(pageable);
     }
 
     @GetMapping("/{productId}")

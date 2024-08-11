@@ -1,7 +1,7 @@
-package com.sparta.msa_exam.product.products;
+package com.sparta.msa_exam.product.dto;
 
 
-import com.sparta.msa_exam.product.core.Product;
+import com.sparta.msa_exam.product.domain.Product;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,9 +1,9 @@
-package com.sparta.msa_exam.product.core;
+package com.sparta.msa_exam.product.domain;
 
 
 
-import com.sparta.msa_exam.product.products.ProductRequestDto;
-import com.sparta.msa_exam.product.products.ProductResponseDto;
+import com.sparta.msa_exam.product.dto.ProductRequestDto;
+import com.sparta.msa_exam.product.dto.ProductResponseDto;
 import jakarta.persistence.*;
 import lombok.*;
 
